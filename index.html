@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e2f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+    }
+
+    .quiz-container {
+      background: #2c2c3e;
+      padding: 20px;
+      border-radius: 15px;
+      width: 350px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    .option {
+      display: block;
+      background: #444;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .option:hover {
+      background: #666;
+    }
+
+    .correct {
+      background: #28a745 !important;
+    }
+
+    .wrong {
+      background: #dc3545 !important;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2 id="question">Question here</h2>
+  <div id="options"></div>
+  <button onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "What is the capital of India?",
+      options: ["Mumbai", "Delhi", "Kolkata", "Chennai"],
+      correct: 1
+    },
+    {
+      question: "Which language runs in a web browser?",
+      options: ["Python", "Java", "C++", "JavaScript"],
+      correct: 3
+    },
+    {
+      question: "What does HTML stand for?",
+      options: [
+        "Hyper Trainer Marking Language",
+        "Hyper Text Markup Language",
+        "Hyper Text Marketing Language",
+        "Hyper Text Markup Leveler"
+      ],
+      correct: 1
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  let selected = null;
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    document.getElementById("question").textContent = q.question;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    q.options.forEach((option, index) => {
+      const btn = document.createElement("div");
+      btn.textContent = option;
+      btn.classList.add("option");
+
+      btn.onclick = () => selectOption(btn, index);
+
+      optionsDiv.appendChild(btn);
+    });
+  }
+
+  function selectOption(element, index) {
+    if (selected !== null) return;
+
+    selected = index;
+    const correctIndex = quizData[currentQuestion].correct;
+
+    const allOptions = document.querySelectorAll(".option");
+
+    allOptions.forEach((opt, i) => {
+      if (i === correctIndex) {
+        opt.classList.add("correct");
+      } else if (i === index) {
+        opt.classList.add("wrong");
+      }
+    });
+
+    if (index === correctIndex) {
+      score++;
+    }
+  }
+
+  function nextQuestion() {
+    if (selected === null) {
+      alert("Please select an answer!");
+      return;
+    }
+
+    currentQuestion++;
+    selected = null;
+
+    if (currentQuestion < quizData.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+    const container = document.querySelector(".quiz-container");
+    container.innerHTML = `
+      <h2>Quiz Finished 🎉</h2>
+      <p>Your Score: ${score} / ${quizData.length}</p>
+      <button onclick="location.reload()">Restart</button>
+    `;
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
